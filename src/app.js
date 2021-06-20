@@ -15,6 +15,7 @@ import Login from './login';
 class App extends React.Component {
 
   render() {
+    
     const { isAuthenticated } = this.props.auth0;
 
     // console.log('app', this.props)
