@@ -1,8 +1,9 @@
 import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import Carousel from 'react-bootstrap/Carousel'
+import { withAuth0 } from '@auth0/auth0-react';
 import './myFavoriteBooks.css';
 import axios from 'axios';
+import BestBooks from './BestBooks';
 
 class MyFavoriteBooks extends React.Component {
   
@@ -21,7 +22,7 @@ class MyFavoriteBooks extends React.Component {
   renderBooks=async()=>{
 
     //localhost:3001/books?emailQuery=<email>
-    let url =(`http://${process.env.REACT_APP_URL}/books?emailQuery=${this.props.userEmail}`);
+    let url =(`http://${process.env.REACT_APP_URL}/books?emailQuery=${this.props.auth0.user.email}`);
     try{
       const books = await axios.get(url);
       this.setState({
@@ -44,27 +45,13 @@ class MyFavoriteBooks extends React.Component {
     
   
     return(
-      <Carousel>
-        {this.state.booksArr.map((element)=>{
-          return(
-  <Carousel.Item>
-    <img
-      className="d-block w-100"
-      src={element.imgURL}
-      alt={element.name}
-    />
-    <Carousel.Caption>
-      <h3>{element.name}</h3>
-      <p>{element.description}</p>
-      <p>{element.status}</p>
-    </Carousel.Caption>
-  </Carousel.Item>
-          )
-        })}
- 
-</Carousel>
+      
+            <BestBooks 
+            booksArr={this.state.booksArr}
+            />
+   
     )
   }
 }
 
-export default MyFavoriteBooks;
+export default withAuth0(MyFavoriteBooks);
