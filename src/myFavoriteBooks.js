@@ -11,7 +11,7 @@ class MyFavoriteBooks extends React.Component {
     super(props)
     this.state={
       booksArr:[],
-      // showbooks:false,
+      showbooksAfterAdd:false,
     }
   }
 
@@ -22,14 +22,15 @@ class MyFavoriteBooks extends React.Component {
   renderBooks=async()=>{
 
     //localhost:3001/books?emailQuery=<email>
-    let url =(`http://${process.env.REACT_APP_URL}/books?emailQuery=${this.props.auth0.user.email}`);
+    let url =(`${process.env.REACT_APP_URL}/books?emailQuery=${this.props.auth0.user.email}`);
     try{
       const books = await axios.get(url);
       this.setState({
         booksArr:books.data,
-        // showbooks:true
+      showbooksAfterAdd:true,
+
       })
-      console.log(this.state.booksArr);
+      // console.log(this.state.booksArr);
 
 
     }
@@ -39,7 +40,46 @@ class MyFavoriteBooks extends React.Component {
 
     }
   };
+
+  addBookHandler=async(event)=>{
+    event.preventDefault();
+    // let bookName=event.target.bookName.value;
+    // let description=event.target.bookDesc.value;
+    // let status=event.target.bookStatus.value;
+    // let email = this.props.auth0.user.email;
+    // console.log(bookName,description,status)
+
+   const  addBook={
+      bookName:event.target.bookName.value,
+      description:event.target.bookDesc.value,
+      status:event.target.bookStatus.value,
+      email : this.props.auth0.user.email,
+    }
   
+      const addedBook = await axios.post(`${process.env.REACT_APP_URL}/books`,addBook)
+  
+      this.setState({
+        booksArr:addedBook.data,
+      })
+  }
+
+
+  deleteCardHandler= async (index)=>{
+    const email= {email:this.props.auth0.email}
+    let id = this.state.booksArr[index]._id;
+    try{
+    let newBookArr= await axios.delete(`${process.env.REACT_APP_URL}/books/${id}`,{params:email})
+
+    this.setState({
+      booksArr:newBookArr.data 
+    })
+    }
+    catch{
+      // console.log(newBookArr)
+      console.log('error in delete books')
+    }
+  }
+
   
   render() {
     
@@ -47,7 +87,10 @@ class MyFavoriteBooks extends React.Component {
     return(
       
             <BestBooks 
+            deleteCardHandler={this.deleteCardHandler}
             booksArr={this.state.booksArr}
+            addBookHandler={this.addBookHandler}
+            showbooksAfterAdd={this.state.showbooksAfterAdd}
             />
    
     )

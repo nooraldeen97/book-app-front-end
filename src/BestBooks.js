@@ -24,21 +24,12 @@ class BestBooks extends React.Component{
     })
   }
 
-  addBookHandler=(event)=>{
-    event.preventDefault();
-    let bookName=event.target.bookName.value;
-    let description=event.target.bookDesc.value;
-    let status=event.target.bookStatus.value;
-    console.log(bookName,description,status)
 
-
-
-  }
     render(){
         return(
           <>
     <CardColumns>
-        {this.props.booksArr.map((element)=>{
+        {this.props.showbooksAfterAdd && this.props.booksArr.map((element,idx)=>{
           return(
             <Card style={{ width: '18rem' }}>
         <Card.Body>
@@ -49,7 +40,7 @@ class BestBooks extends React.Component{
           <Card.Text>
            {element.status}
           </Card.Text>
-          <Button variant="primary">Delete</Button>
+          <Button variant="primary" onClick={()=>{this.props.deleteCardHandler(idx)}}>Delete</Button>
           </Card.Body>
         </Card>
           )
@@ -62,7 +53,7 @@ class BestBooks extends React.Component{
           <Modal.Title>Add New Book</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-      <Form onSubmit={this.addBookHandler}>
+      <Form onSubmit={(e)=>{this.props.addBookHandler(e)}}>
         <Form.Group controlId="formBasicEmail">
           <Form.Label>Book Name</Form.Label>
           <Form.Control type="text" placeholder="Enter the book name" name="bookName" />
