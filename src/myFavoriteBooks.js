@@ -65,8 +65,9 @@ class MyFavoriteBooks extends React.Component {
 
 
   deleteCardHandler= async (index)=>{
-    const email= {email:this.props.auth0.email}
+    const email= {email:this.props.auth0.user.email}
     let id = this.state.booksArr[index]._id;
+    // console.log(email)
     try{
     let newBookArr= await axios.delete(`${process.env.REACT_APP_URL}/books/${id}`,{params:email})
 
@@ -75,7 +76,6 @@ class MyFavoriteBooks extends React.Component {
     })
     }
     catch{
-      // console.log(newBookArr)
       console.log('error in delete books')
     }
   }
