@@ -12,6 +12,11 @@ class MyFavoriteBooks extends React.Component {
     this.state={
       booksArr:[],
       showbooksAfterAdd:false,
+      showUpdate:false,
+      index:0,
+      bookName: '',
+      description:'',
+      status: ''
     }
   }
 
@@ -65,7 +70,7 @@ class MyFavoriteBooks extends React.Component {
 
 
   deleteCardHandler= async (index)=>{
-    const email= {email:this.props.auth0.email}
+    const email= {email:this.props.auth0.user.email}
     let id = this.state.booksArr[index]._id;
     try{
     let newBookArr= await axios.delete(`${process.env.REACT_APP_URL}/books/${id}`,{params:email})
@@ -80,6 +85,58 @@ class MyFavoriteBooks extends React.Component {
     }
   }
 
+  handleCloseUpadate=()=>{
+    this.setState({
+      showUpdate:false
+    })
+  }
+
+  //this fuction will change the showupdate to show us the update modal and we passed the index to pass a data for input field which is (book name , description , status)
+  showUpdateModal=(idx)=>{
+    this.setState({
+      showUpdate:true,
+      index:idx,
+      bookName: this.state.booksArr[idx].name,
+      description:this.state.booksArr[idx].description,
+      status: this.state.booksArr[idx].status
+    })
+  }
+
+  UpdateBookHandler=async(event)=>{
+    event.preventDefault();
+    const id = this.state.booksArr[this.state.index]._id
+    const booksData={
+      index:this.state.index,
+      bookName:event.target.bookName.value,
+      description:event.target.desc.value,
+      status:event.target.sta.value,
+      email:this.props.auth0.user.email
+    }
+    const newArr = await axios.put(`${process.env.REACT_APP_URL}/books/${id}`,booksData);
+    //dont miss that you have to write (data) after the newArr that come from the server 
+    this.setState({
+      booksArr:newArr.data
+    })
+
+  }
+
+  updateName=(e)=>{
+    this.setState({
+      bookName:e.target.value
+    })
+  };
+
+  updateDescription=(e)=>{
+    this.setState({
+      description:e.target.value
+    })
+  }
+
+  updateStatus=(e)=>{
+    this.setState({
+      status:e.target.value
+    })
+  }
   
   render() {
     
@@ -91,6 +148,16 @@ class MyFavoriteBooks extends React.Component {
             booksArr={this.state.booksArr}
             addBookHandler={this.addBookHandler}
             showbooksAfterAdd={this.state.showbooksAfterAdd}
+            showUpdate={this.state.showUpdate}
+            handleCloseUpadate={this.handleCloseUpadate}
+            showUpdateModal={this.showUpdateModal}
+            bookName={this.state.bookName}
+            description={this.state.description}
+            status={this.state.status}
+            updateName={this.updateName}
+            updateDescription={this.updateDescription}
+            updateStatus={this.updateStatus}
+            UpdateBookHandler={this.UpdateBookHandler}
             />
    
     )
